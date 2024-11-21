@@ -4,8 +4,18 @@ from rest_framework.filters import OrderingFilter,SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import *
 from .serializers import *
+from django.core.management import call_command
+from django.http import JsonResponse
+from django.views import View
 
-
+class RunMigrationsView(View):
+    def get(self, request, *args, **kwargs):
+        try:
+            call_command('makemigrations')
+            call_command('migrate')
+            return JsonResponse({'status': 'success', 'message': 'Migrations applied successfully'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
 class DishListAPIView(ListAPIView):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer 
