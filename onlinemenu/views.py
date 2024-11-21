@@ -51,8 +51,17 @@ class BillListAPIView(ListAPIView):
     queryset = Bill.objects.all()
     serializer_class = BillSerializer 
     filter_backends = [DjangoFilterBackend, OrderingFilter,SearchFilter]
-    filterset_fields = ['table',"customer",] 
+    filterset_fields = ['table',"customer",'is_active'] 
     search_fields = ['customer',]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        bill_id = self.request.query_params.get('bill_id', None)
+        if bill_id:
+            queryset = queryset.filter(id=bill_id)
+        queryset = queryset.prefetch_related('orders')  
+        return queryset
+    
 
 class BillCreateAPIView(CreateAPIView):
     queryset = Bill.objects.all()

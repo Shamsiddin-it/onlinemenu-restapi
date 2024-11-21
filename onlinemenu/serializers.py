@@ -11,13 +11,22 @@ class TableSerializer(serializers.ModelSerializer):
         model = Table
         fields = "__all__"
 
-class BillSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Bill
-        fields = "__all__"
-
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = "__all__"
+        fields = ["bill", 'dish', 'quantity', 'total']
+    
+    # def to_representation(self, instance):
+    #     data = super().to_representation(instance)
+    #     data['dish'] = instance.dish
+    #     return data
+    
+
+class BillSerializer(serializers.ModelSerializer):
+    orders = OrderSerializer(many=True, read_only=True)
+    class Meta:
+        model = Bill
+        fields = ['id', 'table', 'customer',"total_price","is_paid","is_active", 'orders']
+
+
 

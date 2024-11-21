@@ -45,6 +45,7 @@ class Bill(models.Model):
     def save(self, *args, **kwargs):
         if self.is_paid:
             self.table.status = "free"
+            self.is_active = False
         else:
             self.table.status = "full"
         self.table.save()  
@@ -54,12 +55,14 @@ class Bill(models.Model):
     
 
 class Order(models.Model):
-    bill = models.ForeignKey(Bill, on_delete=models.CASCADE)
+    bill = models.ForeignKey(Bill,related_name='orders', on_delete=models.CASCADE)
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
     quantity = models.IntegerField()
+    total = models.DecimalField( max_digits=10, decimal_places=2, default=0)
     def save(self, *args, **kwargs):
         bill = self.bill
-        total = bill.total_price + (self.dish.price*self.quantity)
+        self.total = self.dish.price*self.quantity
+        total = bill.total_price + self.total
         bill.total_price = total
         bill.save()
         super().save(*args, **kwargs)
