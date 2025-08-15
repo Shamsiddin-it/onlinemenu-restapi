@@ -7,6 +7,8 @@ from .serializers import *
 from django.core.management import call_command
 from django.http import JsonResponse
 from django.views import View
+from rest_framework.permissions import IsAuthenticated
+from django.http import HttpResponse
 
 class RunMigrationsView(View):
     def get(self, request, *args, **kwargs):
@@ -22,6 +24,7 @@ class DishListAPIView(ListAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter,SearchFilter]
     filterset_fields = ['name',"preparetion_time", "category", 'price'] 
     search_fields = ['name',"category", 'price']
+    
 
 class DishCreateAPIView(CreateAPIView):
     queryset = Dish.objects.all()

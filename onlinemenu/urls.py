@@ -1,7 +1,12 @@
 from django.urls import path
 from .views import *
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 
 urlpatterns = [
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
     # Dish URLs
     path('', RunMigrationsView.as_view(), name='run-migrations'),
     path('dishes/', DishListAPIView.as_view(), name='dish-list'),
